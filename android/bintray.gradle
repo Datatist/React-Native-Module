@@ -1,0 +1,104 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+group = "com.datatist.android"
+version = "1.0.0"
+project.archivesBaseName = "datatist-react-native"
+
+def siteUrl = 'https://github.com/datatist/datatist-react-native'
+def gitUrl = 'https://github.com/datatist/datatist-react-native.git'
+def issueUrl = 'https://github.com/datatist/datatist-react-native/issues'
+
+//生成源文件
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+//生成文档
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.encoding "UTF-8"
+    options.charSet 'UTF-8'
+    options.author true
+    options.version true
+    failOnError false
+}
+
+//文档打包成jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+//拷贝javadoc文件
+task copyDoc(type: Copy) {
+    from "${buildDir}/docs/"
+    into "docs"
+}
+
+//上传到jcenter所需要的源码文件
+artifacts {
+    //文档注释啥的不上传了
+    //archives javadocJar
+    //archives sourcesJar
+}
+
+// 配置maven库，生成POM.xml文件
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'jar'
+                name 'datatist react-native module .'
+                url siteUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'datatist'
+                        name 'LONG TU'
+                        email 'long.tu@datatist.com'
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    //https://bintray.com/datatist/maven 获取
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "maven" //bintray 上面 Package名字
+        name = "datatist-react-native" //bintray 上面项目名
+        desc = 'datatist react-native module .'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        issueTrackerUrl = issueUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
+
+//step
+
+//./gradlew javadocJar
+//./gradlew sourcesJar
+//./gradlew install
+//./gradlew bintrayUpload
