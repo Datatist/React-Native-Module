@@ -24,7 +24,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compileOnly 'com.datatist.android:DatatistSdk:2.2.6'
+    compileOnly 'com.datatist.android:DatatistSdk:2.2.6.1'
     compileOnly "com.facebook.react:react-native:0.57.7" // From node_modules
 
 }

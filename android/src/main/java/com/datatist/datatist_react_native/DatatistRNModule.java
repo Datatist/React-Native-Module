@@ -80,7 +80,7 @@ public class DatatistRNModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void customerTrack(String eventName, ReadableMap properties) {
-//        Track.track().customerEvent().customerTrack(eventName, convertToJSONObject(properties));
+        Track.track().customerEvent().customerTrack(eventName, convertToJSONObject(properties));
     }
 
     @ReactMethod
